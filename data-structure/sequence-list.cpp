@@ -56,7 +56,7 @@ bool isFull(SequenceList &list){
  @return true容量增加成功,fase容量增加失败
  */
 bool incrementCapacity(SequenceList &list){
-    //list = (SequenceList)realloc(list, sizeof(DataType) * LIST_INCREMENT_SIZE);
+    list->data = (DataType*)realloc(list->data, sizeof(DataType) * (LIST_INCREMENT_SIZE + list->length));
     list->size += LIST_INCREMENT_SIZE;
     return list ? true : false;
 }

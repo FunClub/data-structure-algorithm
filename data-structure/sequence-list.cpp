@@ -66,10 +66,12 @@ bool incrementCapacity(SequenceList &seqList){
  
  @param seqList 顺序表
  @param index 索引
+ @param forAdd 是否是为了添加元素而判断
  @return true合法,fase非法
  */
-bool isIndexLegal(SequenceList &seqList, int index){
-    return index>=0 && index <= seqList->length;
+bool isIndexLegal(SequenceList &seqList, int index, bool forAdd){
+    int offs = forAdd ? 0 : -1;
+    return index>=0 && index <= seqList->length + offs;
 }
 
 /**
@@ -89,7 +91,7 @@ bool prepareInsert(SequenceList &seqList , int index){
             return false;
         }
     }
-    if(!isIndexLegal(seqList, index)){
+    if(!isIndexLegal(seqList, index, true)){
         return false;
     }
     return true;
@@ -147,6 +149,32 @@ bool append(SequenceList &seqList, DataType data){
     return true;
 }
 
+
+/**
+ 删除指定索引的元素
+
+ @param seqList 顺序表
+ @param index 索引
+ @return true删除成功,false删除失败
+ */
+bool deleteByIndex(SequenceList &seqList, int index){
+    
+    //判断索引是否合法
+    if(!isIndexLegal(seqList, index, false)){
+        return false;
+    }
+    
+    //将指定索引元素后的每个元素向索引0方向移动一个单位即可删除元素,也保证了数据逻辑连续性
+    for (int i = index; i < seqList->length; i++) {
+        seqList->data[i] = seqList->data[i+1];
+    }
+    
+    //长度-1
+    seqList->length--;
+    
+    return true;
+}
+
 /**
  遍历顺序表
  
@@ -166,8 +194,8 @@ int main(int argc, const char * argv[]) {
     insert(seqList, 3, 4);
     insert(seqList, 4, 5);
     append(seqList, 6);
+    deleteByIndex(seqList,0);
     traverse(seqList);
-
     return 0;
 }
 

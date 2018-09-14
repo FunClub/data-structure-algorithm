@@ -9,8 +9,8 @@
 using namespace std;
 
 //常量定义
-const int LIST_INIT_SIZE = 1;
-const int LIST_INCREMENT_SIZE = 1;
+const int LIST_INIT_SIZE = 100;
+const int LIST_INCREMENT_SIZE = 10;
 
 //类型定义
 typedef int DataType;

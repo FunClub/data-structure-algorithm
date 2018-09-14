@@ -20,7 +20,7 @@ typedef struct Node{
     DataType* data;//存放数据
     int length;//顺序表当前长度
     int size;//顺序表最大容量
-}*SequenceList, Node;
+}*SequenceList, List;
 
 /**
  初始化顺序表
@@ -28,21 +28,21 @@ typedef struct Node{
  @return 顺序表
  */
 SequenceList init(){
-    SequenceList list = (SequenceList)malloc(sizeof(Node));
-    list->data = (DataType*)malloc(sizeof(DataType) * LIST_INIT_SIZE);
-    list->size = LIST_INIT_SIZE;
-    list->length = 0;
-    return list;
+    SequenceList seqList = (SequenceList)malloc(sizeof(List));
+    seqList->data = (DataType*)malloc(sizeof(DataType) * LIST_INIT_SIZE);
+    seqList->size = LIST_INIT_SIZE;
+    seqList->length = 0;
+    return seqList;
 }
 
 /**
  判断顺表是否已满
  
- @param list 顺序表
+ @param seqList 顺序表
  @return true已满,fase未满
  */
-bool isFull(SequenceList &list){
-    if(list->length >= list->size){
+bool isFull(SequenceList &seqList){
+    if(seqList->length >= seqList->size){
         return true;
     }else{
         return false;
@@ -52,24 +52,24 @@ bool isFull(SequenceList &list){
 /**
  增加顺序表容量
  
- @param list 顺序表
+ @param seqList 顺序表
  @return true容量增加成功,fase容量增加失败
  */
-bool incrementCapacity(SequenceList &list){
-    list->data = (DataType*)realloc(list->data, sizeof(DataType) * (LIST_INCREMENT_SIZE + list->length));
-    list->size += LIST_INCREMENT_SIZE;
-    return list ? true : false;
+bool incrementCapacity(SequenceList &seqList){
+    seqList->data = (DataType*)realloc(seqList->data, sizeof(DataType) * (LIST_INCREMENT_SIZE + seqList->length));
+    seqList->size += LIST_INCREMENT_SIZE;
+    return seqList ? true : false;
 }
 
 /**
  判断索引在顺序表中是否合法
  
- @param list 顺序表
+ @param seqList 顺序表
  @param index 索引
  @return true合法,fase非法
  */
-bool isIndexLegal(SequenceList &list, int index){
-    return index>=0 && index <= list->length;
+bool isIndexLegal(SequenceList &seqList, int index){
+    return index>=0 && index <= seqList->length;
 }
 
 /**
@@ -78,18 +78,18 @@ bool isIndexLegal(SequenceList &list, int index){
  2.增加容量；
  3.判断索引是否合法；
  
- @param list 顺序表
+ @param seqList 顺序表
  @param index 索引
  @return true能插入,false不能插入
  */
-bool prepareInsert(SequenceList &list , int index){
-    if(isFull(list)){
-        bool incrementedResut =incrementCapacity(list);
+bool prepareInsert(SequenceList &seqList , int index){
+    if(isFull(seqList)){
+        bool incrementedResut =incrementCapacity(seqList);
         if(!incrementedResut){
             return false;
         }
     }
-    if(!isIndexLegal(list, index)){
+    if(!isIndexLegal(seqList, index)){
         return false;
     }
     return true;
@@ -98,28 +98,51 @@ bool prepareInsert(SequenceList &list , int index){
 /**
  向顺序表指定位置插入元素
  
- @param list 顺序表
+ @param seqList 顺序表
  @param data 元素
  @param index 索引(从0开始)
  @return true插入成功,fase插入失败
  */
-bool insertToIndex(SequenceList &list, int index, DataType data){
+bool insert(SequenceList &seqList, int index, DataType data){
     
     //判断数据能否插入
-    if(!prepareInsert(list, index)){
+    if(!prepareInsert(seqList, index)){
         return false;
     }
     
     //移动元素
-    for (int i = list->length-1; i>=index; i--) {
-        list->data[i+1] = list->data[i];
+    for (int i = seqList->length-1; i>=index; i--) {
+        seqList->data[i+1] = seqList->data[i];
     }
     
     //插入元素
-    list->data[index] = data;
+    seqList->data[index] = data;
     
     //长度+1
-    list->length++;
+    seqList->length++;
+    
+    return true;
+}
+
+/**
+ 向顺序尾部追加元素
+
+ @param seqList 线性表
+ @param data 数据
+ @return true插入成功,fase插入失败
+ */
+bool append(SequenceList &seqList, DataType data){
+    
+    //判断数据能否插入
+    if(!prepareInsert(seqList, 0)){
+        return false;
+    }
+    
+    //追加元素
+    seqList->data[seqList->length] = data;
+    
+    //长度+1
+    seqList->length++;
     
     return true;
 }
@@ -127,22 +150,24 @@ bool insertToIndex(SequenceList &list, int index, DataType data){
 /**
  遍历顺序表
  
- @param list 顺序表
+ @param seqList 顺序表
  */
-void traverse(SequenceList &list){
-    for (int i=0; i<list->length; i++) {
-        std::cout<<list->data[i]<<std::endl;
+void traverse(SequenceList &seqList){
+    for (int i=0; i<seqList->length; i++) {
+        std::cout<<seqList->data[i]<<std::endl;
     }
 }
 
 int main(int argc, const char * argv[]) {
-    SequenceList list =  init();;
-    insertToIndex(list, 0, 1);
-    insertToIndex(list, 1, 2);
-    insertToIndex(list, 2, 3);
-    insertToIndex(list, 3, 4);
-    insertToIndex(list, 4, 5);
-    traverse(list);
+    SequenceList seqList = init();
+    insert(seqList, 0, 1);
+    insert(seqList, 1, 2);
+    insert(seqList, 2, 3);
+    insert(seqList, 3, 4);
+    insert(seqList, 4, 5);
+    append(seqList, 6);
+    traverse(seqList);
+
     return 0;
 }
 

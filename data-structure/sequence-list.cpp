@@ -122,13 +122,12 @@ bool prepareInsert(SequenceList seqList , int index){
  @param seqList 顺序表
  @param data 元素
  @param index 索引(从0开始)
- @return true插入成功,fase插入失败
  */
-bool insert(SequenceList seqList, int index, DataType data){
+void insert(SequenceList seqList, int index, DataType data){
     
     //判断数据能否插入
     if(!prepareInsert(seqList, index)){
-        return false;
+        exit(-1);
     }
     
     //移动元素
@@ -141,8 +140,6 @@ bool insert(SequenceList seqList, int index, DataType data){
     
     //长度+1
     seqList->length++;
-    
-    return true;
 }
 
 /**
@@ -150,13 +147,12 @@ bool insert(SequenceList seqList, int index, DataType data){
 
  @param seqList 线性表
  @param data 数据
- @return true插入成功,fase插入失败
  */
-bool append(SequenceList seqList, DataType data){
+void append(SequenceList seqList, DataType data){
     
     //判断数据能否插入
     if(!prepareInsert(seqList, 0)){
-        return false;
+        exit(-1);
     }
     
     //追加元素
@@ -164,8 +160,6 @@ bool append(SequenceList seqList, DataType data){
     
     //长度+1
     seqList->length++;
-    
-    return true;
 }
 
 /**
@@ -173,13 +167,12 @@ bool append(SequenceList seqList, DataType data){
 
  @param seqList 顺序表
  @param index 索引
- @return true删除成功,false删除失败
  */
-bool deleteByIndex(SequenceList seqList, int index){
+void deleteByIndex(SequenceList seqList, int index){
     
     //判断索引是否合法
     if(!isIndexLegal(seqList, index, true)){
-        return false;
+        exit(-1);
     }
     
     //将指定索引元素后的每个元素向索引0方向移动一个单位即可删除元素,也保证了数据逻辑连续性
@@ -189,8 +182,6 @@ bool deleteByIndex(SequenceList seqList, int index){
     
     //长度-1
     seqList->length--;
-    
-    return true;
 }
 
 /**

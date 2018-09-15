@@ -122,6 +122,7 @@ void insert(PNode headNode, int index, DataType data){
     //3.目标位置结点的前一个结点连接到新结点
     temp->next = newNode;
     
+    //长度+1
     headNode->data++;
     
 }

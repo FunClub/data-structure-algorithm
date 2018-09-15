@@ -1,5 +1,10 @@
 /**
  * 顺序表(动态分配内存)
+ *
+ * 按索引查找:O(1);
+ * 插入:最好O(1),平均n/2=O(n),最坏O(n);
+ * 按值查找:最好O(1),平均(n+1)/2=O(n),最坏O(n);
+ *
  * Created by 刘滔 on 2018/9/14.
  * Copyright © 2018年 刘滔. All rights reserved.
  */
@@ -17,30 +22,18 @@ typedef int DataType;
 
 //动态顺序表的结构体定义
 typedef struct Node{
-    
-    /**
-     * 存放数据
-     */
-    DataType* data;
-    
-    /**
-     * 顺序表当前长度
-     */
-    int length;
-    
-    /**
-     * 顺序表最大容量
-     */
-    int size;
+    DataType* data;//存放数据
+    int length;//顺序表当前长度
+    int size;//顺序表最大容量
 }*SequenceList, List;
 
 /**
- * 静态顺序表的结构体定义
- * typedef struct Node{
- *    DataType data[LIST_INIT_SIZE];//存放数据
- *    int length;//顺序表当前长度
- * }*SequenceList, List;
-*/
+ 静态顺序表的结构体定义
+ typedef struct Node{
+     DataType data[LIST_INIT_SIZE];//存放数据
+     int length;//顺序表当前长度
+ }*SequenceList, List;
+ */
 
 /**
  初始化顺序表
@@ -54,11 +47,11 @@ void init(List &list){
 }
 
 /**
- * 初始化静态顺序表
- *
- * void init(List &list){
- *    list.length = 0;
- * }
+ 初始化静态顺序表
+ 
+ void init(List &list){
+     list.length = 0;
+ }
  */
 
 /**

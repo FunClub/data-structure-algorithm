@@ -1,5 +1,5 @@
 /**
- * 顺序表
+ * 顺序表(动态分配内存)
  * Created by 刘滔 on 2018/9/14.
  * Copyright © 2018年 刘滔. All rights reserved.
  */
@@ -15,38 +15,63 @@ const int LIST_INCREMENT_SIZE = 10;
 //类型定义
 typedef int DataType;
 
-//结构体定义
+//动态顺序表的结构体定义
 typedef struct Node{
-    DataType* data;//存放数据
-    int length;//顺序表当前长度
-    int size;//顺序表最大容量
+    
+    /**
+     * 存放数据
+     */
+    DataType* data;
+    
+    /**
+     * 顺序表当前长度
+     */
+    int length;
+    
+    /**
+     * 顺序表最大容量
+     */
+    int size;
 }*SequenceList, List;
+
+/**
+ * 静态顺序表的结构体定义
+ * typedef struct Node{
+ *    DataType data[LIST_INIT_SIZE];//存放数据
+ *    int length;//顺序表当前长度
+ * }*SequenceList, List;
+*/
 
 /**
  初始化顺序表
  
- @return 顺序表
+ @param list 顺序表
  */
-SequenceList init(){
-    SequenceList seqList = (SequenceList)malloc(sizeof(List));
-    seqList->data = (DataType*)malloc(sizeof(DataType) * LIST_INIT_SIZE);
-    seqList->size = LIST_INIT_SIZE;
-    seqList->length = 0;
-    return seqList;
+void init(List &list){
+    list.data = (DataType*)malloc(sizeof(DataType) * LIST_INIT_SIZE);
+    list.size = LIST_INIT_SIZE;
+    list.length = 0;
 }
 
 /**
- 判断顺表是否已满
+ * 初始化静态顺序表
+ *
+ * void init(List &list){
+ *    list.length = 0;
+ * }
+ */
+
+/**
+ 判断索引在顺序表中是否合法
  
  @param seqList 顺序表
- @return true已满,fase未满
+ @param index 索引
+ @param isInsideIndex 是否在在索引范围内
+ @return true合法,fase非法
  */
-bool isFull(SequenceList &seqList){
-    if(seqList->length >= seqList->size){
-        return true;
-    }else{
-        return false;
-    }
+bool isIndexLegal(SequenceList seqList, int index, bool isInsideIndex){
+    int offs = isInsideIndex ? -1 : 0;
+    return index>=0 && index <= seqList->length + offs;
 }
 
 /**
@@ -55,23 +80,24 @@ bool isFull(SequenceList &seqList){
  @param seqList 顺序表
  @return true容量增加成功,fase容量增加失败
  */
-bool incrementCapacity(SequenceList &seqList){
+bool incrementCapacity(SequenceList seqList){
     seqList->data = (DataType*)realloc(seqList->data, sizeof(DataType) * (LIST_INCREMENT_SIZE + seqList->length));
     seqList->size += LIST_INCREMENT_SIZE;
     return seqList ? true : false;
 }
 
 /**
- 判断索引在顺序表中是否合法
+ 判断顺表是否已满
  
  @param seqList 顺序表
- @param index 索引
- @param forAdd 是否是为了添加元素而判断
- @return true合法,fase非法
+ @return true已满,fase未满
  */
-bool isIndexLegal(SequenceList &seqList, int index, bool forAdd){
-    int offs = forAdd ? 0 : -1;
-    return index>=0 && index <= seqList->length + offs;
+bool isFull(SequenceList seqList){
+    if(seqList->length >= seqList->size){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 /**
@@ -84,14 +110,14 @@ bool isIndexLegal(SequenceList &seqList, int index, bool forAdd){
  @param index 索引
  @return true能插入,false不能插入
  */
-bool prepareInsert(SequenceList &seqList , int index){
+bool prepareInsert(SequenceList seqList , int index){
     if(isFull(seqList)){
         bool incrementedResut =incrementCapacity(seqList);
         if(!incrementedResut){
             return false;
         }
     }
-    if(!isIndexLegal(seqList, index, true)){
+    if(!isIndexLegal(seqList, index, false)){
         return false;
     }
     return true;
@@ -105,7 +131,7 @@ bool prepareInsert(SequenceList &seqList , int index){
  @param index 索引(从0开始)
  @return true插入成功,fase插入失败
  */
-bool insert(SequenceList &seqList, int index, DataType data){
+bool insert(SequenceList seqList, int index, DataType data){
     
     //判断数据能否插入
     if(!prepareInsert(seqList, index)){
@@ -127,13 +153,13 @@ bool insert(SequenceList &seqList, int index, DataType data){
 }
 
 /**
- 向顺序尾部追加元素
+ 向顺序表尾部追加元素
 
  @param seqList 线性表
  @param data 数据
  @return true插入成功,fase插入失败
  */
-bool append(SequenceList &seqList, DataType data){
+bool append(SequenceList seqList, DataType data){
     
     //判断数据能否插入
     if(!prepareInsert(seqList, 0)){
@@ -149,7 +175,6 @@ bool append(SequenceList &seqList, DataType data){
     return true;
 }
 
-
 /**
  删除指定索引的元素
 
@@ -157,10 +182,10 @@ bool append(SequenceList &seqList, DataType data){
  @param index 索引
  @return true删除成功,false删除失败
  */
-bool deleteByIndex(SequenceList &seqList, int index){
+bool deleteByIndex(SequenceList seqList, int index){
     
     //判断索引是否合法
-    if(!isIndexLegal(seqList, index, false)){
+    if(!isIndexLegal(seqList, index, true)){
         return false;
     }
     
@@ -176,18 +201,51 @@ bool deleteByIndex(SequenceList &seqList, int index){
 }
 
 /**
+ 根据索引查询元素
+
+ @param index 索引
+ @return 元素
+ */
+DataType getByIndex(SequenceList seqList, int index){
+    
+    //判断索引是否合法
+    if(!isIndexLegal(seqList, index, true)){
+        exit(1);
+    }
+    
+    return seqList->data[index];
+}
+
+/**
+ 根据数据查询索引
+ 
+ @param data 数据
+ @return 索引
+ */
+DataType getIndexByValue(SequenceList seqList, DataType data){
+    for (int i = 0; i < seqList->length; i++) {
+        if(seqList->data[i] == data){
+            return i;
+        }
+    }
+    return -1;
+}
+
+/**
  遍历顺序表
  
  @param seqList 顺序表
  */
-void traverse(SequenceList &seqList){
+void traverse(SequenceList seqList){
     for (int i=0; i<seqList->length; i++) {
         std::cout<<seqList->data[i]<<std::endl;
     }
 }
 
 int main(int argc, const char * argv[]) {
-    SequenceList seqList = init();
+    List list;
+    init(list);
+    SequenceList seqList = &list;
     insert(seqList, 0, 1);
     insert(seqList, 1, 2);
     insert(seqList, 2, 3);
@@ -196,6 +254,8 @@ int main(int argc, const char * argv[]) {
     append(seqList, 6);
     deleteByIndex(seqList,0);
     traverse(seqList);
+    std::cout<<getByIndex(seqList, 0)<<std::endl;
+    std::cout<<getIndexByValue(seqList, 2)<<std::endl;
     return 0;
 }
 

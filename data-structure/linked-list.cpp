@@ -39,15 +39,57 @@ void init(Node &headNode){
 }
 
 /**
- 判断索引在链表中是否合法
+ 判断索引在顺序表中是否合法
  
  @param headNode 头结点
  @param index 索引
+ @param isInsideIndex 是否在在索引范围内
  @return true合法,fase非法
  */
-bool isIndexLegal(PNode headNode, int index){
-    return index>=1 && index <= headNode->data+1;
+bool isIndexLegal(PNode headNode, int index, bool isInsideIndex){
+    int offs = isInsideIndex ? 0 : 1;
+    return index>=-1 && index < headNode->data + offs;
 }
+
+/**
+ 根据数据查找结点
+ 
+ @param headNode 头结点
+ @param data 数据
+ @return 结点
+ */
+PNode findByValue(PNode headNode, DataType data){
+    PNode temp = headNode->next;
+    while (temp != headNode && temp->data != data) {
+        temp = temp->next;
+    }
+    return temp->data == data ? temp : NULL;
+}
+
+/**
+ 根据索引查找结点
+
+ @param headNode 头结点
+ @param index 索引([-1,length])
+ @return 结点
+ */
+PNode findByIndex(PNode headNode, int index){
+    
+    //判断索引是否合法
+    if(!isIndexLegal(headNode, index, true)){
+        return NULL;
+    }
+    
+    //顺序查找
+    PNode temp = headNode;
+    int count = -1;
+    while (count < index) {
+        count++;
+        temp = temp->next;
+    }
+    return temp;
+}
+
 
 /**
  创建结点
@@ -97,34 +139,88 @@ void append(PNode headNode, DataType data){
  */
 void insert(PNode headNode, int index, DataType data){
     
-    //判断插入位置是否合法
-    if(!isIndexLegal(headNode, index)){
-        exit(-1);
+    //查找操作结点(指定索引的前一个结点)
+    PNode operationNode = findByIndex(headNode, index-1);
+    if(!operationNode){
+        exit(EXIT_FAILURE);
     }
     
     //创建结点
     PNode newNode = createNode(data);
-    
-    //找到目标位置结点的前一个结点
-    PNode temp = headNode;
-    int count = 0;
-    while (temp->next != NULL && count != index-1) {
-        count++;
-        temp = temp->next;
-    }
-    
     //1.新结点连接到目标位置结点
-    newNode->next = temp->next;
+    newNode->next = operationNode->next;
     //2.新结点连接到目标结点的前一结点
-    newNode->prior = temp;
+    newNode->prior = operationNode;
     //3.目标位置结点连接到新结点
-    temp->next->prior = newNode;
+    operationNode->next->prior = newNode;
     //3.目标位置结点的前一个结点连接到新结点
-    temp->next = newNode;
+    operationNode->next = newNode;
     
     //长度+1
     headNode->data++;
     
+}
+
+/**
+ 通过指定索引删除
+
+ @param headNode 头结点
+ @param index 索引
+ */
+void deleteByIndex(PNode headNode, int index){
+    
+    //查找操作结点(指定索引的前一个结点)
+    PNode operationNode = findByIndex(headNode, index-1);
+    if(!operationNode){
+        exit(EXIT_FAILURE);
+    }
+    //查找待删除结点的后一个结点
+    PNode deletedNextNode = operationNode->next->next;
+    
+    //释放待删除结点的内存空间(物理删除)
+    PNode deletedNode = operationNode->next;
+    free(deletedNode);
+    
+    //操作结点连接待删除结点的后一个结点
+    operationNode->next = deletedNextNode;
+    deletedNextNode->prior = operationNode;
+    
+    //长度-1
+    headNode->data--;
+}
+
+/**
+ 通过指定数据删除
+ 
+ @param headNode 头结点
+ @param data 数据
+ */
+void deleteByValue(PNode headNode, DataType data){
+    
+    //查找待删除结点
+    PNode deletedNode = findByValue(headNode, data);
+    if(!deletedNode){
+        exit(EXIT_FAILURE);
+    }
+    
+    //获取操作结点(指定索引的前一个结点)
+    PNode operationNode = deletedNode->prior;
+    if(!operationNode){
+        exit(EXIT_FAILURE);
+    }
+    
+    //查找待删除结点的后一个结点
+    PNode deletedNextNode = deletedNode->next;
+    
+    //释放待删除结点的内存空间(物理删除)
+    free(deletedNode);
+    
+    //操作结点连接待删除结点的后一个结点
+    operationNode->next = deletedNextNode;
+    deletedNextNode->prior = operationNode;
+    
+    //长度-1
+    headNode->data--;
 }
 
 /**
@@ -147,7 +243,10 @@ int main(int argc, const char * argv[]) {
     append(headNode, 1);
     append(headNode, 2);
     append(headNode, 3);
-    insert(headNode, 4, 0);
+    insert(headNode, 0, 0);
+    insert(headNode, 1, 6);
+    deleteByIndex(headNode, 0);
+    deleteByValue(headNode, 2);
     traverse(headNode);
     return 0;
 }

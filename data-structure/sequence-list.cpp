@@ -80,7 +80,7 @@ bool incrementCapacity(SequenceList seqList){
         seqList->size += LIST_INCREMENT_SIZE;
         return true;
     }else{
-        exit(EXIT_FAILURE);
+        exit(EOVERFLOW);
     }
 }
 
@@ -135,7 +135,7 @@ void insert(SequenceList seqList, int index, DataType data){
     
     //判断数据能否插入
     if(!prepareInsert(seqList, index)){
-        exit(EXIT_FAILURE);
+        exit(EXIT_SUCCESS);
     }
     
     //移动元素
@@ -202,7 +202,7 @@ DataType getByIndex(SequenceList seqList, int index){
     
     //判断索引是否合法
     if(!isIndexLegal(seqList, index, true)){
-        exit(1);
+        exit(EXIT_SUCCESS);
     }
     
     return seqList->data[index];

@@ -100,21 +100,24 @@ bool isFull(SequenceList seqList){
 
 /**
  顺序表插入的预处理
- 1.判断容量是否已满；
- 2.增加容量；
- 3.判断索引是否合法；
  
  @param seqList 顺序表
  @param index 索引
  @return true能插入,false不能插入
  */
 bool prepareInsert(SequenceList seqList , int index){
+    
+    //判断容量是否已满
     if(isFull(seqList)){
+        
+        //增加容量
         bool incrementedResut =incrementCapacity(seqList);
         if(!incrementedResut){
             return false;
         }
     }
+    
+    //判断索引是否合法
     if(!isIndexLegal(seqList, index, false)){
         return false;
     }

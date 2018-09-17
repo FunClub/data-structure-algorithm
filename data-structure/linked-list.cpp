@@ -153,7 +153,7 @@ void insert(PNode headNode, int index, DataType data){
     newNode->prior = operationNode;
     //3.目标位置结点连接到新结点
     operationNode->next->prior = newNode;
-    //3.目标位置结点的前一个结点连接到新结点
+    //4.目标位置结点的前一个结点连接到新结点
     operationNode->next = newNode;
     
     //长度+1

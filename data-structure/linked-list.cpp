@@ -98,7 +98,7 @@ PNode findByIndex(PNode headNode, int index){
  @return 新结点
  */
 PNode createNode(DataType data){
-    PNode newNode = (PNode)malloc(sizeof(Node));
+    PNode newNode = new Node;//C:(PNode)malloc(sizeof(Node));
     if(!newNode){
         exit(EXIT_FAILURE);
     }
@@ -179,7 +179,7 @@ void deleteByIndex(PNode headNode, int index){
     
     //释放待删除结点的内存空间(物理删除)
     PNode deletedNode = operationNode->next;
-    free(deletedNode);
+    delete(deletedNode);//C:free(deletedNode);
     
     //操作结点连接待删除结点的后一个结点
     operationNode->next = deletedNextNode;
@@ -213,7 +213,7 @@ void deleteByValue(PNode headNode, DataType data){
     PNode deletedNextNode = deletedNode->next;
     
     //释放待删除结点的内存空间(物理删除)
-    free(deletedNode);
+    delete(deletedNode);//C:free(deletedNode);
     
     //操作结点连接待删除结点的后一个结点
     operationNode->next = deletedNextNode;

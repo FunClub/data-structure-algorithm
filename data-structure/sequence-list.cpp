@@ -180,7 +180,7 @@ void deleteByIndex(SequenceList seqList, int index){
     
     //判断索引是否合法
     if(!isIndexLegal(seqList, index, true)){
-        exit(-1);
+        exit(EXIT_SUCCESS);
     }
     
     //将指定索引元素后的每个元素向索引0方向移动一个单位即可删除元素,也保证了数据逻辑连续性

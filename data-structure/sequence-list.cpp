@@ -132,7 +132,7 @@ void insert(SequenceList seqList, int index, DataType data){
     
     //判断数据能否插入
     if(!prepareInsert(seqList, index)){
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     
     //移动元素

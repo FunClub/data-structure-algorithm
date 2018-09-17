@@ -74,9 +74,14 @@ bool isIndexLegal(SequenceList seqList, int index, bool isInsideIndex){
  @return true容量增加成功,fase容量增加失败
  */
 bool incrementCapacity(SequenceList seqList){
-    seqList->data = (DataType*)realloc(seqList->data, sizeof(DataType) * (LIST_INCREMENT_SIZE + seqList->length));
-    seqList->size += LIST_INCREMENT_SIZE;
-    return seqList ? true : false;
+    DataType* newData = (DataType*)realloc(seqList->data, sizeof(DataType) * (LIST_INCREMENT_SIZE + seqList->length));
+    if(newData){
+        seqList->data = newData;
+        seqList->size += LIST_INCREMENT_SIZE;
+        return true;
+    }else{
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**

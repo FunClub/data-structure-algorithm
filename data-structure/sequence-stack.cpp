@@ -43,7 +43,7 @@ void init(Stack &stack){
  */
 bool incrementCapacity(SequenceStack seqStack){
     int newMemorySize= (seqStack->size + STACK_INCREMENT_SIZE) * sizeof(DataType);
-    DataType* newMemory = (DataType*)realloc(seqStack->top, newMemorySize);
+    DataType* newMemory = (DataType*)realloc(seqStack->base, newMemorySize);
     if(newMemory){
         seqStack->base = newMemory;
         seqStack->top = seqStack->base+seqStack->size;

@@ -24,33 +24,16 @@ typedef struct Node{
 }*SequenceStack, Stack;
 
 /**
- 静态顺序表的结构体定义
- typedef struct Node{
- DataType data[LIST_INIT_SIZE];//存放数据
- int length;//顺序表当前长度
- }*SequenceList, List;
- */
-
-/**
  初始化栈
  
  @param stack 栈
  */
 void init(Stack &stack){
-    int size = sizeof(Stack) * STACK_INIT_SIZE;
-    stack.top = (DataType*)malloc(size);
+    int initMemorySize = sizeof(DataType) * STACK_INIT_SIZE;
+    stack.top = (DataType*)malloc(initMemorySize);
     stack.base = stack.top;
-    stack.size = size;
-    //std::cout<<"初始化成功剩余容量="<<stack.size-(stack.top - stack.base)*sizeof(DataType)<<"，base="<<stack.base<<"，size="<<size<<std::endl;
+    stack.size = STACK_INIT_SIZE;
 }
-
-/**
- 初始化静态顺序表
- 
- void init(List &list){
- list.length = 0;
- }
- */
 
 /**
  增加顺序栈容量
@@ -59,15 +42,16 @@ void init(Stack &stack){
  @return true容量增加成功,fase容量增加失败
  */
 bool incrementCapacity(SequenceStack seqStack){
-    int size = sizeof(DataType) * STACK_INCREMENT_SIZE + seqStack->size;
-    DataType* newData = (DataType*)realloc(seqStack->top, size);
-    if(newData){
-        seqStack->top = newData;
-        seqStack->size = size;
-        std::cout<<"增加容量成功剩余容量="<<seqStack->size-(seqStack->top - seqStack->base)*sizeof(DataType)<<",top="<<seqStack->top<<"，base="<<seqStack->base<<"，size="<<seqStack->size<<std::endl;
-       
+    int newMemorySize= (seqStack->size + STACK_INCREMENT_SIZE) * sizeof(DataType);
+    DataType* newMemory = (DataType*)realloc(seqStack->top, newMemorySize);
+    if(newMemory){
+        seqStack->base = newMemory;
+        seqStack->top = seqStack->base+seqStack->size;
+        seqStack->size += STACK_INCREMENT_SIZE;
+        std::cout<<"内存分配成功"<<std::endl;
         return true;
     }else{
+        std::cout<<"内存分配失败"<<std::endl;
         exit(EOVERFLOW);
     }
 }
@@ -75,12 +59,16 @@ bool incrementCapacity(SequenceStack seqStack){
 /**
  判断顺序栈是否已满
  
+ 【注意】
+ |相同类型的指针相减|=间隔元素的个数
+ 例如：已知变量A==B为int*类型
+ 有：A-B==0;A++,A-B==1,B-A==-1;
+ 
  @param seqStack 顺序栈
  @return true已满,fase未满
  */
 bool isFull(SequenceStack seqStack){
-    std::cout<<"剩余容量="<<seqStack->size-(seqStack->top - seqStack->base)*sizeof(DataType)<<",top="<<seqStack->top<<"，base="<<seqStack->base<<"，size="<<seqStack->size<<std::endl;
-    if(seqStack->size-(seqStack->top - seqStack->base)*sizeof(DataType)==0){
+    if(seqStack->top - seqStack->base >= seqStack->size){
         return true;
     }else{
         return false;
@@ -122,27 +110,29 @@ void push(SequenceStack seqStack, DataType data){
     }
     
     //入栈
-    *++seqStack->top = data;
-    
+    *seqStack->top++ = data;
+    std::cout<<"剩余容量="<<seqStack->size-(seqStack->top-seqStack->base)<<std::endl;
 }
 
-void pop(SequenceStack seqStack){
+/**
+ 遍历栈
+ 
+ @param seqStack 顺序栈
+ */
+void traverse(SequenceStack seqStack){
     while (seqStack->top != seqStack->base) {
-        std::cout<<*seqStack->top--<<std::endl;
+        std::cout<<*--seqStack->top<<std::endl;
     }
 }
-
-
 
 int main(int argc, const char * argv[]) {
     Stack stack;
     init(stack);
     SequenceStack seqStack = &stack;
-    std::cout<<"size="<<seqStack->size<<std::endl;
-    std::cout<<"base="<<seqStack->base<<std::endl;
-    std::cout<<"top="<<seqStack->top<<std::endl;
-    stack.top++;
-    std::cout<<"top="<<seqStack->top<<std::endl;
+    push(seqStack, 1);
+    push(seqStack, 2);
+    push(seqStack, 3);
+    traverse(seqStack);
     return 0;
 }
 

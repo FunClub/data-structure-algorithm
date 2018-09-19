@@ -1,6 +1,18 @@
 /**
  * 顺序栈
  *
+ * base指针【总是】指向栈底
+ * top指针指向栈顶元素的上一个位置
+ *       |___|
+ *       |___|<-top
+ *       |_3_|
+ *       |_2_|
+ * base->|_1_|
+ *   (逻辑结构示意图)
+ *
+ * 入栈:O(1);
+ * 弹栈:O(1);
+ *
  * Created by 刘滔 on 2018/9/17.
  * Copyright © 2018年 刘滔. All rights reserved.
  */
@@ -26,6 +38,12 @@ typedef struct Node{
 /**
  初始化栈
  
+       |___|
+       |___|
+       |___|
+       |___|
+ base->|___|<-top
+ 此时栈顶和栈底指针都指向分配内存的首地址
  @param stack 栈
  */
 void init(Stack &stack){
@@ -33,6 +51,18 @@ void init(Stack &stack){
     stack.top = (DataType*)malloc(initMemorySize);
     stack.base = stack.top;
     stack.size = STACK_INIT_SIZE;
+}
+
+
+/**
+ 判断栈是否为空
+ 只要判断栈顶==栈底指针即可
+ 
+ @param seqStack 顺序栈
+ @return true为空,false不为空
+ */
+bool isEmpty(SequenceStack seqStack){
+    return seqStack->base == seqStack->top;
 }
 
 /**
@@ -43,10 +73,15 @@ void init(Stack &stack){
  */
 bool incrementCapacity(SequenceStack seqStack){
     int newMemorySize= (seqStack->size + STACK_INCREMENT_SIZE) * sizeof(DataType);
+    
+    //扩容时要以seqStack->base为扩容基地址,因为top移动过,不指向内存空间的首地址
     DataType* newMemory = (DataType*)realloc(seqStack->base, newMemorySize);
     if(newMemory){
         seqStack->base = newMemory;
+        
+        //恢复栈顶指针的位置
         seqStack->top = seqStack->base+seqStack->size;
+        
         seqStack->size += STACK_INCREMENT_SIZE;
         std::cout<<"内存分配成功"<<std::endl;
         return true;
@@ -115,6 +150,23 @@ void push(SequenceStack seqStack, DataType data){
 }
 
 /**
+ 弹栈
+ 
+ @param seqStack 顺序栈
+ @param data 数据回显
+ */
+void pop(SequenceStack seqStack, DataType &data){
+    
+    // 判断栈是否为空
+    if(isEmpty(seqStack)){
+        exit(EXIT_SUCCESS);
+    }
+    
+    //获取栈顶元素并弹栈
+    data = *--seqStack->top;
+}
+
+/**
  遍历栈
  
  @param seqStack 顺序栈
@@ -128,10 +180,12 @@ void traverse(SequenceStack seqStack){
 int main(int argc, const char * argv[]) {
     Stack stack;
     init(stack);
+    DataType data;
     SequenceStack seqStack = &stack;
     push(seqStack, 1);
     push(seqStack, 2);
     push(seqStack, 3);
+    pop(seqStack,data);
     traverse(seqStack);
     return 0;
 }

@@ -166,15 +166,35 @@ void pop(SequenceStack seqStack, DataType &data){
     data = *--seqStack->top;
 }
 
+
+/**
+ 获取栈顶元素
+
+ @param seqStack 顺序栈
+ @param data 数据回显
+ */
+void getTop(SequenceStack seqStack, DataType &data){
+    
+    // 判断栈是否为空
+    if (isEmpty(seqStack)) {
+        exit(EXIT_SUCCESS);
+    }
+    
+    //获取栈顶元素
+    data = *(seqStack->top-1);
+}
+
 /**
  遍历栈
  
  @param seqStack 顺序栈
  */
 void traverse(SequenceStack seqStack){
+    DataType* temp = seqStack->top;
     while (seqStack->top != seqStack->base) {
         std::cout<<*--seqStack->top<<std::endl;
     }
+    seqStack->top = temp;
 }
 
 int main(int argc, const char * argv[]) {
@@ -185,8 +205,11 @@ int main(int argc, const char * argv[]) {
     push(seqStack, 1);
     push(seqStack, 2);
     push(seqStack, 3);
-    pop(seqStack,data);
+    pop(seqStack, data);
+    std::cout<<"栈顶元素"<<data<<std::endl;
     traverse(seqStack);
+    getTop(seqStack,data);
+    std::cout<<"栈顶元素"<<data<<std::endl;
     return 0;
 }
 
